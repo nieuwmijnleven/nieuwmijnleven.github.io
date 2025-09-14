@@ -30,8 +30,8 @@ twitter_username: nieuwmijnleven
 github_username: nieuwmijnleven 
 
 # Build settings
-#theme: minima
-remote_theme: "jekyll/minima@593a05a2a6426b2f2438e334abf8c8edc80d4624"
+theme: minima
+  #remote_theme: "jekyll/minima@593a05a2a6426b2f2438e334abf8c8edc80d4624"
 plugins:
   - jekyll-feed
 
