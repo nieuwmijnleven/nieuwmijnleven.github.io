@@ -1,0 +1,146 @@
+# In plaats van complexiteit: een simpele oplossing voor een transactieprobleem in Java's OnTheGo Database
+
+Het project **OnTheGo Database** dat ik persoonlijk ontwikkel ([GitHub-link](https://github.com/nieuwmijnleven/OnTheGoDatabase)), is qua structuur eenvoudiger dan commerciële databasesystemen.  
+Zo wordt er bijvoorbeeld geen gebruik gemaakt van geavanceerde technieken zoals **MVCC (Multi-Version Concurrency Control)** bij transactieverwerking. In plaats daarvan is gekozen voor een simpele aanpak op basis van **undo-logs**.
+
+In deze blogpost deel ik een specifiek probleem dat zich voordeed bij de **hergebruik van record blocks tijdens undo-verwerking**, en hoe ik dat op een **simpele maar effectieve manier heb opgelost**.
+
+---
+
+## Projectachtergrond: eenvoud als uitgangspunt bij OnTheGo Database
+
+OnTheGo Database is ontworpen als een leer- en experimenteerproject.  
+In tegenstelling tot commerciële databases implementeert het geen complexe isolatieniveaus of versiebeheer, maar focust het zich op een minimalistische en begrijpelijke structuur.
+
+- **Transactie-afhandeling**: gebaseerd op undo-logs
+    
+- **Geen MVCC**: geen snapshot-gebaseerde concurrency control
+    
+- **Update-verwerking**: beschouwd als een combinatie van `insert` + `delete`
+    
+
+Dankzij deze eenvoudige structuur is het eenvoudiger om bij fouten de oorzaak snel te achterhalen en een oplossing te implementeren.
+
+---
+
+## Het probleem: testen slagen, maar fouten in echte scenario’s
+
+Het probleem ontstond na het refactoren van de **serialisatie** van `BTreeNode`, een interne node in de `BTreeIndex` structuur.  
+Hoewel de testcode in eerste instantie geen problemen liet zien, leidde deze verandering ertoe dat een bestaande transactie-test faalde. Daardoor werd een **onverwachte bug in het undo-proces** zichtbaar.
+
+---
+
+## Undo-verwerking: kernlogica op een rij
+
+De undo-verwerking werkt als volgt:
+
+- De acties `insert`, `update`, `delete` worden gelogd wanneer een transactie wordt uitgevoerd
+    
+- Bij een **rollback** worden deze acties in **omgekeerde volgorde ongedaan gemaakt**
+    
+- `Update` wordt intern beschouwd als een combinatie van `delete + insert`, waardoor de undo zich in feite richt op `insert` en `delete`
+    
+
+### Voorbeeldscenario:
+
+```text
+insert D -> delete D -> insert N -> delete N
+```
+
+Rollback-undo-volgorde:
+
+```text
+insert N -> delete N -> insert D -> delete D
+```
+
+---
+
+## Kernprobleem: record blocks keren niet terug naar hun originele locatie
+
+Bij de undo-actie `insert N` wordt geprobeerd om **record N terug te plaatsen op zijn oorspronkelijke locatie**.  
+Problemen ontstaan als:
+
+- De originele block waar record N zat inmiddels **door een andere transactie is gewijzigd of in gebruik is**
+    
+- Daardoor wordt record N tijdens de undo mogelijk **in een andere block geplaatst**
+    
+- Bij de daaropvolgende undo van `delete N` wordt geprobeerd N te verwijderen uit de oorspronkelijke block, waar het dus niet meer is → **data-integriteitsfout**
+    
+
+Deze fout kwam niet naar voren in eenvoudige tests, maar **werd gelukkig zichtbaar** tijdens uitgebreidere tests na de refactoring van de BTree-structuur.
+
+---
+
+## De oplossing: precieze undo met block ID-mapping
+
+In plaats van een complex blok-trackingmechanisme toe te voegen, koos ik voor een **simpele en duidelijke aanpak**:
+
+### Oplossing in het kort:
+
+1. Tijdens **undo delete (wat eigenlijk een insert is)**:
+    
+    - Als het record **niet in zijn originele block kan worden geplaatst**,
+        
+    - Registreer dan de mapping `originele block ID → nieuwe block ID` in een Map
+        
+2. Tijdens **undo insert (wat een delete is)**:
+    
+    - Raadpleeg de Map om te achterhalen **waar het record zich werkelijk bevindt**
+        
+    - Verwijder het record uit de correcte block
+        
+
+### Voorbeeld:
+
+```java
+Map<OldBlockId, NewBlockId> recordPosTracker = new HashMap<>();
+recordPosTracker.put(oldBlockId, newBlockId);
+```
+
+Door deze mapping kan de undo-delete-actie **exact verwijzen naar het juiste block**, en blijft de data consistent.
+
+---
+
+## De kracht van eenvoud: complexe problemen oplossen zonder complexiteit
+
+Aanvankelijk overwoog ik om een uitgebreid mechanisme te bouwen om de status van blocks live te volgen of extra metadata te beheren.  
+Maar dat zou de **eenvoudige ontwerpfilosofie van dit project ondermijnen**.
+
+In plaats daarvan:
+
+- Behield ik zoveel mogelijk de bestaande logica
+    
+- Voerde ik alleen tracking in voor gevallen waarin block-locatie veranderde
+    
+- En loste ik het probleem op zonder de code nodeloos ingewikkeld te maken
+    
+
+Resultaat: **een veilige oplossing zonder over-engineering**.
+
+---
+
+## Tot slot: eenvoud is soms de beste strategie
+
+Deze ervaring bevestigde voor mij opnieuw dat **"eenvoud krachtig is"**.  
+Geavanceerde functies en architecturen zijn waardevol, maar uiteindelijk draait het om **focus op het probleem en een zo eenvoudig mogelijke oplossing**.
+
+OnTheGo Database is nog volop in ontwikkeling.  
+Momenteel richt ik me op een **stabiele I/O-architectuur en betrouwbare nodebeheer**.  
+Optimalisaties op het gebied van performance en structuur komen **later**.
+
+Want dit is volgens mij de juiste volgorde voor het bouwen van een goed systeem:
+
+> **Correctness → Stability → Performance**  
+> Nu correct, later nóg correcter.
+
+Ik zal ook in de toekomst praktische probleemoplossingen zoals deze blijven delen.
+
+Bedankt voor het lezen!
+
+---
+
+## Gerelateerde code
+
+[https://github.com/nieuwmijnleven/OnTheGoDatabase/blob/e73fc8ed2f37c932db0c211f284b215194f6bf2d/onthego.database/app/src/main/java/onthego/database/core/table/StandardTable.java#L93](https://github.com/nieuwmijnleven/OnTheGoDatabase/blob/e73fc8ed2f37c932db0c211f284b215194f6bf2d/onthego.database/app/src/main/java/onthego/database/core/table/StandardTable.java#L93)
+
+---
