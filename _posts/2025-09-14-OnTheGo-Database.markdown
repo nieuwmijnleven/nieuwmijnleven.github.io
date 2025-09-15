@@ -147,6 +147,6 @@ Bedankt voor het lezen!
 
 ## Gerelateerde code
 
-[github-link](https://github.com/nieuwmijnleven/OnTheGoDatabase/blob/e73fc8ed2f37c932db0c211f284b215194f6bf2d/onthego.database/app/src/main/java/onthego/database/core/table/StandardTable.java#L93)
+[github-link](https://github.com/nieuwmijnleven/OnTheGoDatabase/blob/18dfda3f64445449dd111b921897dc3117973420/onthego.database/app/src/main/java/onthego/database/core/table/StandardTable.java#L93)
 
 ---
