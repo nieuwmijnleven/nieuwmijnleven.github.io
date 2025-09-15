@@ -1,3 +1,9 @@
+---
+layout: post
+title: "In plaats van complexiteit: een simpele oplossing voor een transactieprobleem in  OnTheGo Database"
+date: 2025-09-14 15:04:00 +0200
+categories: OnTheGo Database
+---
 # In plaats van complexiteit: een simpele oplossing voor een transactieprobleem in  OnTheGo Database
 
 Het project **OnTheGo Database** dat ik persoonlijk ontwikkel ([github-link](https://github.com/nieuwmijnleven/OnTheGoDatabase)), is qua structuur eenvoudiger dan commerciële databasesystemen.  
