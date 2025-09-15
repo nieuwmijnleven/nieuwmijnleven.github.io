@@ -1,13 +1,6 @@
----
-layout: post
-title:  "OnTheGo Database"
-date:   2025-09-14 15:03:10 +0200
-categories: jekyll update
----
+# In plaats van complexiteit: een simpele oplossing voor een transactieprobleem in  OnTheGo Database
 
-# In plaats van complexiteit: een simpele oplossing voor een transactieprobleem in Java's OnTheGo Database
-
-Het project **OnTheGo Database** dat ik persoonlijk ontwikkel ([GitHub-link](https://github.com/nieuwmijnleven/OnTheGoDatabase)), is qua structuur eenvoudiger dan commerciële databasesystemen.  
+Het project **OnTheGo Database** dat ik persoonlijk ontwikkel ([github-link](https://github.com/nieuwmijnleven/OnTheGoDatabase)), is qua structuur eenvoudiger dan commerciële databasesystemen.  
 Zo wordt er bijvoorbeeld geen gebruik gemaakt van geavanceerde technieken zoals **MVCC (Multi-Version Concurrency Control)** bij transactieverwerking. In plaats daarvan is gekozen voor een simpele aanpak op basis van **undo-logs**.
 
 In deze blogpost deel ik een specifiek probleem dat zich voordeed bij de **hergebruik van record blocks tijdens undo-verwerking**, en hoe ik dat op een **simpele maar effectieve manier heb opgelost**.
@@ -45,7 +38,7 @@ De undo-verwerking werkt als volgt:
     
 - Bij een **rollback** worden deze acties in **omgekeerde volgorde ongedaan gemaakt**
     
-- `Update` wordt intern beschouwd als een combinatie van `delete + insert`, waardoor de undo zich in feite richt op `insert` en `delete`
+- `Update` wordt, behalve wanneer de grootte van het record gelijk blijft, intern beschouwd als een combinatie van `delete + insert`, waardoor de undo zich in feite richt op `insert` en `delete`
     
 
 ### Voorbeeldscenario:
@@ -148,6 +141,6 @@ Bedankt voor het lezen!
 
 ## Gerelateerde code
 
-[https://github.com/nieuwmijnleven/OnTheGoDatabase/blob/e73fc8ed2f37c932db0c211f284b215194f6bf2d/onthego.database/app/src/main/java/onthego/database/core/table/StandardTable.java#L93](https://github.com/nieuwmijnleven/OnTheGoDatabase/blob/e73fc8ed2f37c932db0c211f284b215194f6bf2d/onthego.database/app/src/main/java/onthego/database/core/table/StandardTable.java#L93)
+[github-link](https://github.com/nieuwmijnleven/OnTheGoDatabase/blob/e73fc8ed2f37c932db0c211f284b215194f6bf2d/onthego.database/app/src/main/java/onthego/database/core/table/StandardTable.java#L93)
 
 ---
