@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Bug ontdekt in Lox: `this` variabele actief buiten klassemethodes"
-date: 2025-09-21 14:00:00 +0200
+date: 2025-09-24 14:00:00 +0200
 categories: Bug Report
 ---
 ## 🐞 Bug ontdekt in Lox: `this` variabele actief buiten klassemethodes
@@ -103,9 +103,9 @@ Vanaf nu zal elk verkeerd gebruik van `this` buiten een klasse correct resultere
 
 Ik heb deze bug gemeld in de [officiële GitHub-repository van Crafting Interpreters](https://github.com/munificent/craftinginterpreters) en een Pull Request ingediend met de oplossing:
 
-- 📌 **Issue:** [Bug Report: `this` Variable Registered in Slot 0 Even Outside of Class Methods](https://github.com/munificent/craftinginterpreters/issues/1201)
+- 📌 **Issue:** [Suggestion: Avoid Registering this in Slot 0 for Non-Method Functions #1203](https://github.com/munificent/craftinginterpreters/issues/1203)
     
-- 🔧 **Pull Request:** [Fix: Only assign `this` to slot 0 if `currentClass` is not null](https://github.com/munificent/craftinginterpreters/pull/1202)
+- 🔧 **Pull Request:** [Suggestion: Only assign `this` to slot 0 if `currentClass` is not null](https://github.com/munificent/craftinginterpreters/pull/1202)
     
 
 Alle bestaande tests slagen, en deze fix zorgt voor correcter en veiliger gedrag van `this`.
@@ -135,7 +135,7 @@ Door dieper in de compiler te duiken en het gedrag van scopes en variabelen te a
     
 - 💻 [GitHub Repository](https://github.com/munificent/craftinginterpreters)
     
-- 🐛 [Bug Report op GitHub](https://github.com/munificent/craftinginterpreters/issues/1201)
+- 🐛 [Bug Report op GitHub](https://github.com/munificent/craftinginterpreters/issues/1203)
     
 - 🔧 [Pull Request met de fix](https://github.com/munificent/craftinginterpreters/pull/1202)
     
