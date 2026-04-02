@@ -89,6 +89,6 @@ True software craftsmanship is about finding the essence of the issue and resolv
 ### 📚 References
 
   * 📘 [Crafting Interpreters](https://craftinginterpreters.com/)
-  * 💻 [Source: compiler.c]()
+  * 💻 [Source: compiler.c](https://github.com/munificent/craftinginterpreters/blob/master/c/compiler.c)
 
 ---
