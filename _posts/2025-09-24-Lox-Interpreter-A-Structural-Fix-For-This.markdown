@@ -14,7 +14,7 @@ The core of the issue lies in how the compiler manages the stack slots for local
 
 -----
 
-### ❗ The Problem: Redundant Workarounds vs. Structural Correctness
+### The Problem: Redundant Workarounds vs. Structural Correctness
 
 In the original Lox implementation, the author included a manual check to prevent the use of `this` outside of a class:
 
@@ -33,7 +33,7 @@ While this prevents the user from *typing* `this` in the global scope, it is ess
 
 -----
 
-### 🔍 Root Cause Analysis
+### Root Cause Analysis
 
 The flaw is located in `compile.c` at line 329, where the compiler initializes the local variable array for a new scope:
 
@@ -53,7 +53,7 @@ The condition `type != TYPE_FUNCTION` evaluates to true not only in class scopes
 
 -----
 
-### ✅ The Solution: Correct-by-Design
+### The Solution: Correct-by-Design
 
 A cleaner, more professional approach is to ensure the `this` variable is only ever stored when the compiler is explicitly within a class context. By fixing the initial allocation logic, we eliminate the need for redundant checks later on.
 
@@ -74,7 +74,7 @@ By adding `currentClass != NULL`, we ensure that `this` is only registered in th
 
 -----
 
-### 🧭 Conclusion
+### Conclusion
 
 By refining the compiler's scope initialization:
 
@@ -86,9 +86,9 @@ True software craftsmanship is about finding the essence of the issue and resolv
 
 -----
 
-### 📚 References
+### References
 
-  * 📘 [Crafting Interpreters](https://craftinginterpreters.com/)
-  * 💻 [Source: compiler.c](https://github.com/munificent/craftinginterpreters/blob/master/c/compiler.c)
+  * [Crafting Interpreters](https://craftinginterpreters.com/)
+  * [Source: compiler.c](https://github.com/munificent/craftinginterpreters/blob/master/c/compiler.c)
 
 ---
