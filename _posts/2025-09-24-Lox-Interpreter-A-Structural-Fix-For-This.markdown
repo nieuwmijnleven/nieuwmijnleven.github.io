@@ -6,7 +6,7 @@ categories: Bug Report
 ---
 ## Eliminating Redundant Workarounds: A Structural Fix for `this` in the Lox Interpreter
 
-### 🧠 Background
+### Background
 
 Lox is a simple object-oriented scripting language implemented in the book *Crafting Interpreters* by Robert Nystrom. While analyzing the compiler's implementation, I discovered a significant structural oversight regarding how the `this` keyword is handled in different scopes.
 
