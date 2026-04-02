@@ -3,6 +3,7 @@ layout: post
 title: "Bug ontdekt in Lox: `this` variabele actief buiten klassemethodes"
 date: 2025-09-24 14:00:00 +0200
 categories: Bug Report
+published: false
 ---
 ## 🐞 Bug ontdekt in Lox: `this` variabele actief buiten klassemethodes
 
